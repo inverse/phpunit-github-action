@@ -15,4 +15,10 @@ class AddTest extends TestCase
         $add = new Add();
         self::assertEquals(4, $add->int(2, 2));
     }
+
+    public function testAddFloat(): void
+    {
+        $add = new Add();
+        self::assertEquals(4.0, $add->float(2.0, 2.0));
+    }
 }

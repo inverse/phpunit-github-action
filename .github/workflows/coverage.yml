@@ -15,15 +15,13 @@ jobs:
         run: |
           ./vendor/bin/phpunit . --coverage-text=coverage.log
       - uses: actions/github-script@v3
-          with:
-            script: |
-              const fs = require('fs');
-
-              var coverage = fs.readFileSync('coverage.log','utf8');
-
-              await github.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: coverage
-              })
+        with:
+          script: |
+            const fs = require('fs');
+            const coverage = fs.readFileSync('coverage.log','utf8');
+            await github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: coverage
+            })
