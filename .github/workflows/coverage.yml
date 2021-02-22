@@ -23,7 +23,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: code-coverage
-          path: master-coverage.log
+          path: .coverage
         continue-on-error: true
       - uses: actions/github-script@v3
         if: github.event_name == 'pull_request'
@@ -34,8 +34,8 @@ jobs:
             const coverage = coverageContents.match(/\d+.\d/)[0];
 
             let masterCoverage = 0;
-            if (fs.existsSync('master-coverage.log')) {
-              masterCoverage = fs.readFileSync('master-coverage.log', 'utf8');
+            if (fs.existsSync('.coverage/coverage.log')) {
+              masterCoverage = fs.readFileSync('.coverage/coverage.log', 'utf8');
             }
             const difference =  coverage - masterCoverage;
             
