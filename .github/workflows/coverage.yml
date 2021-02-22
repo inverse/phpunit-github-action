@@ -26,6 +26,7 @@ jobs:
           path: master-coverage.log
         continue-on-error: true
       - uses: actions/github-script@v3
+        if: github.event_name == 'pull_request'
         with:
           script: |
             const fs = require('fs');
@@ -37,7 +38,17 @@ jobs:
               masterCoverage = fs.readFileSync('master-coverage.log', 'utf8');
             }
             const difference =  coverage - masterCoverage;
-            const message = `Unit test coverage is ${coverage}% which is a ${difference}% difference from master`
+            
+            let msg = '';
+            if (difference > 0 ) {
+              msg = `${difference}% increase from`;
+            } else if (difference < 0) {
+              msg = `${difference}% decrease from`;
+            } else {
+              msg = 'the same as';
+            }
+
+            const message = `Unit test coverage is ${coverage}% which is ${msg} master`
 
             await github.issues.createComment({
               issue_number: context.issue.number,
