@@ -1,7 +1,8 @@
 {
     "name": "malachi/phpunit-github-action",
     "require-dev": {
-        "phpunit/phpunit": "^9.5"
+        "phpunit/phpunit": "^9.5",
+        "rregeer/phpunit-coverage-check": "^0.3.1"
     },
     "authors": [
         {
@@ -9,7 +10,6 @@
             "email": "inverse.chi@gmail.com"
         }
     ],
-    "require": {},
     "autoload": {
         "psr-4": {
             "Inverse\\Toy\\": "src/"

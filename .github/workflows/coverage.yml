@@ -13,15 +13,37 @@ jobs:
         run: composer install
       - name: Run tests
         run: |
-          ./vendor/bin/phpunit . --coverage-text=coverage.log
+          vendor/bin/phpunit --coverage-clover clover.xml
+      - name: Generate
+        run: |
+          vendor/bin/coverage-check clover.xml 0 --only-percentage > coverage.log
+      - uses: actions/download-artifact@v2
+        with:
+          name: code-coverage
+          path: master-coverage.log
+        continue-on-error: true
       - uses: actions/github-script@v3
         with:
           script: |
             const fs = require('fs');
-            const coverage = fs.readFileSync('coverage.log','utf8');
+            const coverageContents = fs.readFileSync('coverage.log','utf8');
+            const coverage = coverageContents.match(/\d+.\d/)[0];
+
+            let masterCoverage = 0;
+            if (fs.existsSync('master-coverage.log')) {
+              masterCoverage = fs.readFileSync('master-coverage.log', 'utf8');
+            }
+            const difference =  coverage - masterCoverage;
+            const message = `Unit test coverage is ${coverage}% which is a ${difference}% difference from master`
+
             await github.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: coverage
+              body: message
             })
+      - uses: actions/upload-artifact@v2
+        if: github.ref == 'refs/heads/master'
+        with:
+          name: code-coverage
+          path: coverage.log
